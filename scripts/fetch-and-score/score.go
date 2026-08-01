@@ -80,6 +80,7 @@ func scoreCandidates(candidates []Candidate, config Config) []FeedIssue {
 			DomainTags:    sortedCopy(candidate.Repository.Domains),
 			ShapeTags:     shapeTags,
 			TechnicalTags: technicalTags,
+			Stars:         candidate.Stars,
 			Score:         score,
 			Why:           explainMatches(matches),
 			Matches:       matches,

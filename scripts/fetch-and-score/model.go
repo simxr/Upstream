@@ -75,6 +75,7 @@ type GitHubIssue struct {
 type Candidate struct {
 	Issue      GitHubIssue
 	Repository Repository
+	Stars      int
 }
 
 type Match struct {
@@ -95,6 +96,7 @@ type FeedIssue struct {
 	DomainTags    []string  `json:"domain_tags"`
 	ShapeTags     []string  `json:"shape_tags"`
 	TechnicalTags []string  `json:"technical_tags"`
+	Stars         int       `json:"stars,omitempty"`
 	Score         int       `json:"score"`
 	Why           string    `json:"why"`
 	Matches       []Match   `json:"matches"`
@@ -107,6 +109,7 @@ type Feed struct {
 	ChangedAt         time.Time   `json:"changed_at"`
 	LegacyGeneratedAt *time.Time  `json:"generated_at,omitempty"`
 	Profile           string      `json:"profile"`
+	ProfileTags       []string    `json:"profile_tags"`
 	Total             int         `json:"total"`
 	Issues            []FeedIssue `json:"issues"`
 }

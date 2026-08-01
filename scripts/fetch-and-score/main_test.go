@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"path/filepath"
+	"reflect"
 	"testing"
 	"time"
 )
@@ -11,11 +12,12 @@ import (
 func TestFeedContentMatchesIgnoresRefreshTimes(t *testing.T) {
 	issues := []FeedIssue{{ID: "example/project#1", Repository: "example/project", Number: 1}}
 	existing := Feed{
-		CheckedAt: time.Now(),
-		ChangedAt: time.Now().Add(-time.Hour),
-		Profile:   "Tester",
-		Total:     len(issues),
-		Issues:    issues,
+		CheckedAt:   time.Now(),
+		ChangedAt:   time.Now().Add(-time.Hour),
+		Profile:     "Tester",
+		ProfileTags: []string{"Terraform"},
+		Total:       len(issues),
+		Issues:      issues,
 	}
 	contents, err := json.Marshal(existing)
 	if err != nil {
@@ -30,11 +32,28 @@ func TestFeedContentMatchesIgnoresRefreshTimes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !feedContentMatches(loaded, "Tester", issues) {
+	if !feedContentMatches(loaded, "Tester", []string{"Terraform"}, issues) {
 		t.Fatal("expected identical issue content to match")
 	}
-	if feedContentMatches(loaded, "Someone else", issues) {
+	if feedContentMatches(loaded, "Someone else", []string{"Terraform"}, issues) {
 		t.Fatal("expected a different profile not to match")
+	}
+	if feedContentMatches(loaded, "Tester", []string{"Helm"}, issues) {
+		t.Fatal("expected different profile tags not to match")
+	}
+}
+
+func TestProfileTagLabelsAreReadableAndDeterministic(t *testing.T) {
+	profile := Profile{Skills: []Skill{
+		{ID: "terraform", Label: "Terraform"},
+		{ID: "helm", Label: "Helm"},
+		{ID: "terraform-duplicate", Label: "Terraform"},
+	}}
+
+	got := profileTagLabels(profile)
+	want := []string{"Helm", "Terraform"}
+	if !reflect.DeepEqual(got, want) {
+		t.Fatalf("expected %v, got %v", want, got)
 	}
 }
 

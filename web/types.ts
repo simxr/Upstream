@@ -25,6 +25,7 @@ export type FeedIssue = {
   domain_tags: string[];
   shape_tags: string[];
   technical_tags: string[];
+  stars?: number;
   score: number;
   why: string;
   matches: Match[];
@@ -37,6 +38,7 @@ export type Feed = {
   changed_at?: string | null;
   generated_at?: string | null;
   profile: string;
+  profile_tags?: string[];
   total: number;
   issues: FeedIssue[];
 };

@@ -20,6 +20,10 @@ type searchResponse struct {
 	Items      []GitHubIssue `json:"items"`
 }
 
+type repositoryResponse struct {
+	StargazersCount int `json:"stargazers_count"`
+}
+
 type GitHubClient struct {
 	BaseURL    string
 	Token      string
@@ -38,8 +42,15 @@ func newGitHubClient(baseURL, token string) *GitHubClient {
 
 func (client *GitHubClient) fetchCandidates(ctx context.Context, config RepositoriesConfig) ([]Candidate, error) {
 	repositories := make(map[string]Repository, len(config.Repositories))
+	starsByRepository := make(map[string]int, len(config.Repositories))
 	for _, repository := range config.Repositories {
-		repositories[strings.ToLower(repository.Repo)] = repository
+		key := strings.ToLower(repository.Repo)
+		repositories[key] = repository
+		stars, err := client.fetchRepositoryStars(ctx, repository.Repo)
+		if err != nil {
+			return nil, fmt.Errorf("fetch metadata for %s: %w", repository.Repo, err)
+		}
+		starsByRepository[key] = stars
 	}
 
 	issues, err := client.searchIssues(ctx, config)
@@ -53,9 +64,42 @@ func (client *GitHubClient) fetchCandidates(ctx context.Context, config Reposito
 		if !ok {
 			return nil, fmt.Errorf("GitHub returned issue from repository outside allowlist: %q", repositoryName)
 		}
-		candidates = append(candidates, Candidate{Issue: issue, Repository: repository})
+		candidates = append(candidates, Candidate{
+			Issue:      issue,
+			Repository: repository,
+			Stars:      starsByRepository[strings.ToLower(repositoryName)],
+		})
 	}
 	return candidates, nil
+}
+
+func (client *GitHubClient) fetchRepositoryStars(ctx context.Context, repository string) (int, error) {
+	endpoint := client.BaseURL + "/repos/" + strings.Trim(repository, "/")
+	request, err := client.newRequest(ctx, endpoint)
+	if err != nil {
+		return 0, err
+	}
+	response, err := client.doWithRateLimit(ctx, request)
+	if err != nil {
+		return 0, err
+	}
+	body, readErr := io.ReadAll(io.LimitReader(response.Body, 1<<20))
+	closeErr := response.Body.Close()
+	if readErr != nil {
+		return 0, readErr
+	}
+	if closeErr != nil {
+		return 0, closeErr
+	}
+	if response.StatusCode != http.StatusOK {
+		return 0, githubResponseError(response, body)
+	}
+
+	var result repositoryResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return 0, fmt.Errorf("decode repository metadata: %w", err)
+	}
+	return result.StargazersCount, nil
 }
 
 func (client *GitHubClient) searchIssues(ctx context.Context, config RepositoriesConfig) ([]GitHubIssue, error) {
@@ -92,15 +136,9 @@ func (client *GitHubClient) searchRepository(ctx context.Context, repository Rep
 		parameters.Set("page", strconv.Itoa(page))
 		endpoint := client.BaseURL + "/search/issues?" + parameters.Encode()
 
-		request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
+		request, err := client.newRequest(ctx, endpoint)
 		if err != nil {
 			return nil, err
-		}
-		request.Header.Set("Accept", "application/vnd.github+json")
-		request.Header.Set("X-GitHub-Api-Version", "2022-11-28")
-		request.Header.Set("User-Agent", "upstream-feed-generator")
-		if client.Token != "" {
-			request.Header.Set("Authorization", "Bearer "+client.Token)
 		}
 
 		response, err := client.doWithRateLimit(ctx, request)
@@ -116,13 +154,7 @@ func (client *GitHubClient) searchRepository(ctx context.Context, repository Rep
 			return nil, closeErr
 		}
 		if response.StatusCode != http.StatusOK {
-			return nil, fmt.Errorf(
-				"GitHub returned %s (rate remaining=%s, reset=%s): %s",
-				response.Status,
-				response.Header.Get("X-RateLimit-Remaining"),
-				response.Header.Get("X-RateLimit-Reset"),
-				strings.TrimSpace(string(body)),
-			)
+			return nil, githubResponseError(response, body)
 		}
 
 		var result searchResponse
@@ -135,6 +167,30 @@ func (client *GitHubClient) searchRepository(ctx context.Context, repository Rep
 		}
 	}
 	return issues, nil
+}
+
+func (client *GitHubClient) newRequest(ctx context.Context, endpoint string) (*http.Request, error) {
+	request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
+	if err != nil {
+		return nil, err
+	}
+	request.Header.Set("Accept", "application/vnd.github+json")
+	request.Header.Set("X-GitHub-Api-Version", "2022-11-28")
+	request.Header.Set("User-Agent", "upstream-feed-generator")
+	if client.Token != "" {
+		request.Header.Set("Authorization", "Bearer "+client.Token)
+	}
+	return request, nil
+}
+
+func githubResponseError(response *http.Response, body []byte) error {
+	return fmt.Errorf(
+		"GitHub returned %s (rate remaining=%s, reset=%s): %s",
+		response.Status,
+		response.Header.Get("X-RateLimit-Remaining"),
+		response.Header.Get("X-RateLimit-Reset"),
+		strings.TrimSpace(string(body)),
+	)
 }
 
 func (client *GitHubClient) doWithRateLimit(ctx context.Context, request *http.Request) (*http.Response, error) {

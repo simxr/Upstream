@@ -50,6 +50,14 @@ export function IssueCard({ issue, status, onStatusChange }: IssueCardProps) {
           <strong>{issue.score}</strong>
           <span>match score</span>
         </div>
+        {typeof issue.stars === "number" && (
+          <span className="repo-stars" aria-label={`${issue.stars.toLocaleString()} GitHub stars`}>
+            <svg viewBox="0 0 16 16" aria-hidden="true">
+              <path d="m8 1.1 2.1 4.2 4.7.7-3.4 3.3.8 4.7L8 11.8 3.8 14l.8-4.7L1.2 6l4.7-.7L8 1.1Z" />
+            </svg>
+            {formatStars(issue.stars)}
+          </span>
+        )}
         <span className="updated">Updated {formatDate(issue.updated_at)}</span>
         <label className={`status-select status-select--${status}`}>
           <span className="visually-hidden">Contribution status</span>
@@ -94,4 +102,11 @@ function formatDate(value: string) {
     month: "short",
     year: "numeric",
   }).format(date);
+}
+
+function formatStars(value: number) {
+  return new Intl.NumberFormat("en", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(value);
 }

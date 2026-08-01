@@ -11,15 +11,23 @@ import (
 func TestFetchCandidatesUsesAllowlistedLabelSearch(t *testing.T) {
 	var server *httptest.Server
 	server = httptest.NewServer(http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
-		if request.Method != http.MethodGet || request.URL.Path != "/search/issues" {
+		if request.Method != http.MethodGet {
+			t.Fatalf("unexpected request: %s %s", request.Method, request.URL.Path)
+		}
+		if request.Header.Get("Authorization") != "Bearer test-token" {
+			t.Fatal("missing token header")
+		}
+		if request.URL.Path == "/repos/example/project" {
+			response.Header().Set("Content-Type", "application/json")
+			_, _ = response.Write([]byte(`{"stargazers_count": 1234}`))
+			return
+		}
+		if request.URL.Path != "/search/issues" {
 			t.Fatalf("unexpected request: %s %s", request.Method, request.URL.Path)
 		}
 		query := request.URL.Query().Get("q")
 		if !strings.Contains(query, "repo:example/project") || !strings.Contains(query, `label:"good first issue","help wanted"`) {
 			t.Fatalf("unexpected search query: %s", query)
-		}
-		if request.Header.Get("Authorization") != "Bearer test-token" {
-			t.Fatal("missing token header")
 		}
 		response.Header().Set("Content-Type", "application/json")
 		_, _ = response.Write([]byte(`{
@@ -41,6 +49,9 @@ func TestFetchCandidatesUsesAllowlistedLabelSearch(t *testing.T) {
 	}
 	if len(candidates) != 1 || candidates[0].Issue.Number != 1 {
 		t.Fatalf("unexpected candidates: %#v", candidates)
+	}
+	if candidates[0].Stars != 1234 {
+		t.Fatalf("expected repository stars, got %d", candidates[0].Stars)
 	}
 }
 

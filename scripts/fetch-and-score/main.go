@@ -38,16 +38,18 @@ func run(configDir, output, apiURL, token string) error {
 		return err
 	}
 	issues := scoreCandidates(candidates, config)
+	profileTags := profileTagLabels(config.Profile)
 	checkedAt := time.Now().UTC().Truncate(time.Second)
 	previous, _ := readFeed(output)
-	contentUnchanged := feedContentMatches(previous, config.Profile.Name, issues)
+	contentUnchanged := feedContentMatches(previous, config.Profile.Name, profileTags, issues)
 	changedAt := resolveChangedAt(previous, contentUnchanged, checkedAt)
 	feed := Feed{
-		CheckedAt: checkedAt,
-		ChangedAt: changedAt,
-		Profile:   config.Profile.Name,
-		Total:     len(issues),
-		Issues:    issues,
+		CheckedAt:   checkedAt,
+		ChangedAt:   changedAt,
+		Profile:     config.Profile.Name,
+		ProfileTags: profileTags,
+		Total:       len(issues),
+		Issues:      issues,
 	}
 
 	contents, err := json.MarshalIndent(feed, "", "  ")
@@ -78,8 +80,20 @@ func readFeed(path string) (Feed, error) {
 	return existing, nil
 }
 
-func feedContentMatches(existing Feed, profile string, issues []FeedIssue) bool {
-	return existing.Profile == profile && reflect.DeepEqual(existing.Issues, issues)
+func feedContentMatches(existing Feed, profile string, profileTags []string, issues []FeedIssue) bool {
+	return existing.Profile == profile &&
+		reflect.DeepEqual(existing.ProfileTags, profileTags) &&
+		reflect.DeepEqual(existing.Issues, issues)
+}
+
+func profileTagLabels(profile Profile) []string {
+	labels := make([]string, 0, len(profile.Skills))
+	for _, skill := range profile.Skills {
+		if skill.Label != "" {
+			labels = append(labels, skill.Label)
+		}
+	}
+	return uniqueSorted(labels)
 }
 
 func resolveChangedAt(previous Feed, contentUnchanged bool, checkedAt time.Time) time.Time {

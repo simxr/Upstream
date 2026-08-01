@@ -30,6 +30,7 @@ func TestScoreCandidatesIsExplainableAndRanked(t *testing.T) {
 		{
 			Repository: Repository{Repo: "example/aws", Source: "manual", Domains: []string{"aws-ecosystem"}},
 			Issue:      GitHubIssue{Number: 2, Title: "Terraform plan fails", Body: "reproduction", HTMLURL: "https://example.test/2", Labels: []GitHubLabel{{Name: "kind/bug"}}, UpdatedAt: now},
+			Stars:      4200,
 		},
 		{
 			Repository: Repository{Repo: "example/otel", Source: "manual", Domains: []string{"observability"}},
@@ -46,6 +47,9 @@ func TestScoreCandidatesIsExplainableAndRanked(t *testing.T) {
 	}
 	if issues[0].Score != domainPoints+skillPoints+shapePoints {
 		t.Fatalf("unexpected score: %d", issues[0].Score)
+	}
+	if issues[0].Stars != 4200 {
+		t.Fatalf("expected repository popularity signal, got %d", issues[0].Stars)
 	}
 	if !strings.Contains(issues[0].Why, "Terraform") || len(issues[0].Matches) != 3 {
 		t.Fatalf("missing match audit trail: %#v", issues[0])

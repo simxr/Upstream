@@ -171,8 +171,9 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
           </p>
           <h1>Find upstream work<br />worth doing.</h1>
           <p className="hero-copy">
-            A curated list of approachable Kubernetes and infrastructure issues, ranked against
-            {feed.profile ? ` ${feed.profile}’s` : " your"} real-world skills—not just a programming language.
+            A curated list of cloud-native and platform-engineering issues—Kubernetes, IaC,
+            GitOps, observability, and more—ranked against
+            {feed.profile ? ` ${feed.profile}’s` : " your"} real skills, not just a language filter.
           </p>
         </div>
         <div className="hero-stat">
@@ -191,11 +192,22 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
         </div>
       </section>
 
+      {feed.profile_tags && feed.profile_tags.length > 0 && (
+        <section className="profile-strip" aria-label="Active matching profile">
+          <span className="profile-strip__label">Matching against your profile</span>
+          <div className="profile-strip__tags">
+            {feed.profile_tags.map((tag) => (
+              <span className="tag tag--profile" key={tag}>{tag}</span>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="principles" id="how-it-works" aria-label="How Upstream works">
         <article>
           <span>01</span>
           <strong>Curate</strong>
-          <p>Search only trusted cloud-native projects and maintainer-approved contribution labels.</p>
+          <p>Search trusted cloud-native and platform-engineering projects using maintainer-approved contribution labels.</p>
         </article>
         <article>
           <span>02</span>
@@ -205,7 +217,7 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
         <article>
           <span>03</span>
           <strong>Contribute</strong>
-          <p>Track the journey locally while every upstream interaction remains human-owned.</p>
+          <p>Track your progress locally—every interaction with upstream remains yours.</p>
         </article>
       </section>
 
