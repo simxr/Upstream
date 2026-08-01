@@ -1,0 +1,13 @@
+.DS_Store
+.env
+.env.*
+!.env.example
+node_modules/
+.next/
+out/
+coverage/
+*.log
+bin/
+.tools/
+*.tsbuildinfo
+web/public/feed.json

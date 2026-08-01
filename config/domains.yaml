@@ -1,0 +1,25 @@
+domains:
+  - id: kubernetes-controllers
+    label: Kubernetes controllers
+    description: Reconcilers, operators, CRDs, admission controllers, and Kubernetes API integrations.
+  - id: infrastructure-as-code
+    label: Infrastructure as code
+    description: Terraform, OpenTofu, providers, modules, and declarative cloud provisioning.
+  - id: gitops-delivery
+    label: GitOps and delivery
+    description: Declarative deployment, continuous delivery, release automation, and configuration promotion.
+  - id: observability
+    label: Observability
+    description: Metrics, logs, traces, alerting, telemetry pipelines, and operational diagnostics.
+  - id: service-mesh
+    label: Service mesh
+    description: East-west traffic, gateways, proxies, service identity, and mesh operations.
+  - id: security-policy
+    label: Security and policy
+    description: Identity, authorization, supply-chain security, secrets, compliance, and policy enforcement.
+  - id: platform-tooling
+    label: Platform tooling
+    description: Developer platforms, portals, cluster lifecycle, packaging, and platform APIs.
+  - id: aws-ecosystem
+    label: AWS ecosystem
+    description: AWS services, EKS integrations, IAM, load balancing, networking, and AWS-native operations.

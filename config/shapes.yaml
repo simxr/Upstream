@@ -1,0 +1,47 @@
+shapes:
+  - id: bug-fix
+    label: Bug fix
+    description: Reproduce and correct unintended behavior.
+    label_aliases:
+      - bug
+      - kind/bug
+      - type/bug
+      - bug-fix
+      - defect
+  - id: docs
+    label: Documentation
+    description: Correct or improve user, operator, or contributor documentation.
+    label_aliases:
+      - documentation
+      - docs
+      - kind/documentation
+      - kind/docs
+      - area/documentation
+  - id: tests
+    label: Tests
+    description: Add or improve unit, integration, end-to-end, or conformance coverage.
+    label_aliases:
+      - test
+      - tests
+      - testing
+      - kind/test
+      - area/testing
+  - id: chart-config
+    label: Chart or configuration
+    description: Improve Helm charts, manifests, examples, configuration, or deployment defaults.
+    label_aliases:
+      - helm
+      - chart
+      - configuration
+      - config
+      - area/helm
+      - area/config
+  - id: feature
+    label: Feature
+    description: Add a new supported capability or extend existing behavior.
+    label_aliases:
+      - enhancement
+      - feature
+      - kind/feature
+      - type/feature
+      - feature-request

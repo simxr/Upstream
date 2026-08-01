@@ -1,0 +1,62 @@
+discovery_labels:
+  - good first issue
+  - good-first-issue
+  - help wanted
+  - help-wanted
+  - starter
+  - first-timers-only
+repositories:
+  - repo: aws/karpenter-provider-aws
+    source: manual
+    domains: [kubernetes-controllers, aws-ecosystem, platform-tooling]
+  - repo: aws/eks-anywhere
+    source: manual
+    domains: [platform-tooling, kubernetes-controllers, aws-ecosystem]
+  - repo: aws-controllers-k8s/community
+    source: manual
+    domains: [kubernetes-controllers, aws-ecosystem]
+  - repo: aws-controllers-k8s/runtime
+    source: manual
+    domains: [kubernetes-controllers, aws-ecosystem]
+  - repo: kubernetes-sigs/aws-load-balancer-controller
+    source: manual
+    domains: [kubernetes-controllers, aws-ecosystem]
+  - repo: aws-ia/terraform-aws-eks-blueprints
+    source: manual
+    domains: [infrastructure-as-code, aws-ecosystem, platform-tooling]
+  - repo: terraform-aws-modules/terraform-aws-eks
+    source: manual
+    domains: [infrastructure-as-code, aws-ecosystem]
+  - repo: kubernetes-sigs/external-dns
+    source: cncf-landscape
+    domains: [kubernetes-controllers, platform-tooling]
+  - repo: argoproj/argo-cd
+    source: cncf-landscape
+    domains: [gitops-delivery, platform-tooling]
+  - repo: fluxcd/flux2
+    source: cncf-landscape
+    domains: [gitops-delivery, kubernetes-controllers]
+  - repo: crossplane/crossplane
+    source: cncf-landscape
+    domains: [infrastructure-as-code, kubernetes-controllers, platform-tooling]
+  - repo: backstage/backstage
+    source: cncf-landscape
+    domains: [platform-tooling]
+  - repo: kubernetes-sigs/cluster-api
+    source: cncf-landscape
+    domains: [kubernetes-controllers, platform-tooling, infrastructure-as-code]
+  - repo: opentofu/opentofu
+    source: cncf-landscape
+    domains: [infrastructure-as-code]
+  - repo: helm/helm
+    source: cncf-landscape
+    domains: [platform-tooling, gitops-delivery]
+  - repo: external-secrets/external-secrets
+    source: cncf-landscape
+    domains: [security-policy, kubernetes-controllers]
+  - repo: open-telemetry/opentelemetry-collector-contrib
+    source: cncf-landscape
+    domains: [observability, platform-tooling]
+  - repo: kubeflow/kubeflow
+    source: cncf-landscape
+    domains: [platform-tooling, kubernetes-controllers]

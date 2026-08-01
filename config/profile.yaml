@@ -1,0 +1,37 @@
+name: Simar
+domains:
+  - aws-ecosystem
+  - infrastructure-as-code
+  - kubernetes-controllers
+  - platform-tooling
+  - gitops-delivery
+preferred_shapes:
+  - bug-fix
+  - tests
+  - chart-config
+  - docs
+skills:
+  - id: terraform
+    label: Terraform
+    keywords: [terraform, terragrunt, hcl, provider, module]
+  - id: helm
+    label: Helm
+    keywords: [helm, chart, values.yaml, template, release]
+  - id: eks
+    label: Amazon EKS
+    keywords: [eks, amazon eks, aws eks]
+  - id: iam-irsa
+    label: AWS IAM and IRSA
+    keywords: [iam, irsa, pod identity, workload identity, service account]
+  - id: storage-csi
+    label: Kubernetes storage and CSI
+    keywords: [csi, storageclass, persistentvolume, ebs, efs, volume]
+  - id: networking-ingress
+    label: Kubernetes networking and ingress
+    keywords: [ingress, gateway, load balancer, networking, cni, dns, alb, nlb]
+  - id: gitops
+    label: GitOps
+    keywords: [gitops, argocd, argo cd, flux, reconciliation]
+  - id: go
+    label: Go
+    keywords: [golang, go code, go.mod]
