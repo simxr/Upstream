@@ -46,7 +46,7 @@ export default async function JourneyPage({ params }: { params: Promise<{ slug: 
       <section className="journey-hero">
         <div>
           <p className="terminal-kicker"><span>upstream://journey — verified merges</span></p>
-          <h1>{journey.name}&apos;s<br />upstream journey.</h1>
+          <h1>{journey.name}&apos;s{" "}<span>upstream journey.</span></h1>
           <p>
             Public, verifiable pull requests merged into curated cloud-native projects. No impact
             score, no self-reported claims—just the work and its upstream record.
