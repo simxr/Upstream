@@ -5,6 +5,9 @@ discovery_labels:
   - help-wanted
   - starter
   - first-timers-only
+  - contributions-requested
+  - contributor/good-first-issue
+  - contributor/wanted
 repositories:
   - repo: aws/karpenter-provider-aws
     source: manual
