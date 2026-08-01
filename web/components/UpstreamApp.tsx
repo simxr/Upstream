@@ -118,8 +118,20 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
     <main>
       <header className="site-header">
         <a className="brand" href="#top" aria-label="Upstream home">
-          <span className="brand-mark" aria-hidden="true">U</span>
-          Upstream
+          <span className="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 48 48">
+              <path className="brand-mark__shell" d="m24 5 13 7.5v15L24 35 11 27.5v-15Z" />
+              <path className="brand-mark__arms" d="M17 24c-5 .5-7 4-5.5 7.5 1 2.5-.5 5-4.5 5.5M24 28v5.5c0 3-2 5-5 7M31 24c5 .5 7 4 5.5 7.5-1 2.5.5 5 4.5 5.5" />
+              <circle className="brand-mark__node" cx="7" cy="37" r="2.25" />
+              <circle className="brand-mark__node" cx="19" cy="41" r="2.25" />
+              <circle className="brand-mark__node" cx="41" cy="37" r="2.25" />
+              <circle className="brand-mark__core" cx="24" cy="20" r="5" />
+              <circle className="brand-mark__eye" cx="24" cy="20" r="1.6" />
+            </svg>
+          </span>
+          <span className="brand-wordmark">
+            <span className="brand-prompt">&gt;</span>upstream<span className="brand-cursor">_</span>
+          </span>
         </a>
         <p>Cloud-native work, matched to what you know.</p>
         <div className="header-actions">

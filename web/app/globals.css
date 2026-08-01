@@ -97,23 +97,46 @@ button, select { cursor: pointer; }
   display: inline-flex;
   width: fit-content;
   align-items: center;
-  gap: 10px;
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 1.25rem;
+  gap: 9px;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 1rem;
   font-weight: 700;
+  letter-spacing: -0.035em;
   text-decoration: none;
 }
 
 .brand-mark {
-  width: 31px;
-  height: 31px;
+  width: 38px;
+  height: 38px;
   display: grid;
   place-items: center;
-  border-radius: 50% 50% 46% 54%;
-  color: var(--brand-mark-ink);
-  background: var(--accent);
-  font-family: Inter, sans-serif;
-  font-size: 0.85rem;
+  color: var(--accent-strong);
+  background: linear-gradient(145deg, var(--accent-soft), var(--surface));
+  border: 1px solid var(--line-strong);
+  border-radius: 11px;
+  box-shadow: inset 0 0 18px var(--glow);
+  transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.brand:hover .brand-mark {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 18px var(--glow), 0 0 18px var(--glow);
+  transform: translateY(-1px) rotate(-2deg);
+}
+
+.brand-mark svg { width: 33px; height: 33px; overflow: visible; }
+.brand-mark__shell { fill: var(--accent-soft); stroke: currentColor; stroke-width: 1.5; stroke-linejoin: round; }
+.brand-mark__arms { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; }
+.brand-mark__node { fill: var(--violet); stroke: var(--surface); stroke-width: 1; }
+.brand-mark__core { fill: var(--accent); }
+.brand-mark__eye { fill: var(--brand-mark-ink); }
+
+.brand-wordmark { display: inline-flex; align-items: baseline; }
+.brand-prompt { margin-right: 2px; color: var(--accent-strong); }
+.brand-cursor { color: var(--violet); animation: brand-cursor 900ms step-end infinite; }
+
+@keyframes brand-cursor {
+  50% { opacity: 0; }
 }
 
 .site-header p {
