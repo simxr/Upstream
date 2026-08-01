@@ -7,16 +7,25 @@ import { TrackerBoard } from "./TrackerBoard";
 import type { Feed, TrackerStatus } from "@/types";
 
 const storageKey = "upstream.issue-statuses.v1";
+const themeStorageKey = "upstream.theme.v1";
 const pageSize = 30;
+
+type Theme = "dark" | "light";
 
 export function UpstreamApp({ feed }: { feed: Feed }) {
   const [query, setQuery] = useState("");
   const [domain, setDomain] = useState("all");
   const [shape, setShape] = useState("all");
-  const [statusFilter, setStatusFilter] = useState<TrackerStatus | "all">("all");
+  const [statusFilters, setStatusFilters] = useState<TrackerStatus[]>([]);
   const [visibleLimit, setVisibleLimit] = useState(pageSize);
   const [statuses, setStatuses] = useState<Record<string, TrackerStatus>>({});
   const [trackerLoaded, setTrackerLoaded] = useState(false);
+  const [theme, setTheme] = useState<Theme>("dark");
+
+  useEffect(() => {
+    const currentTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    setTheme(currentTheme);
+  }, []);
 
   useEffect(() => {
     try {
@@ -53,16 +62,21 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
       const matchesDomain = domain === "all" || issue.domain_tags.includes(domain);
       const matchesShape = shape === "all" || issue.shape_tags.includes(shape);
       const issueStatus = statuses[issue.id] ?? "untracked";
-      const matchesStatus = statusFilter === "all" || issueStatus === statusFilter;
+      const matchesStatus = statusFilters.length === 0 || statusFilters.includes(issueStatus);
       return matchesQuery && matchesDomain && matchesShape && matchesStatus;
     });
-  }, [domain, feed.issues, query, shape, statusFilter, statuses]);
+  }, [domain, feed.issues, query, shape, statusFilters, statuses]);
 
   useEffect(() => {
     setVisibleLimit(pageSize);
-  }, [domain, query, shape, statusFilter]);
+  }, [domain, query, shape, statusFilters]);
 
   const displayedIssues = visibleIssues.slice(0, visibleLimit);
+  const activeFilterCount =
+    statusFilters.length +
+    Number(Boolean(query.trim())) +
+    Number(domain !== "all") +
+    Number(shape !== "all");
 
   function updateStatus(id: string, status: TrackerStatus) {
     setStatuses((current) => {
@@ -77,7 +91,27 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
     setQuery("");
     setDomain("all");
     setShape("all");
-    setStatusFilter("all");
+    setStatusFilters([]);
+  }
+
+  function toggleStatusFilter(status: TrackerStatus) {
+    setStatusFilters((current) =>
+      current.includes(status)
+        ? current.filter((item) => item !== status)
+        : [...current, status],
+    );
+  }
+
+  function toggleTheme() {
+    const nextTheme: Theme = theme === "dark" ? "light" : "dark";
+    document.documentElement.dataset.theme = nextTheme;
+    setTheme(nextTheme);
+
+    try {
+      window.localStorage.setItem(themeStorageKey, nextTheme);
+    } catch {
+      // The selected theme still applies for this visit when storage is unavailable.
+    }
   }
 
   return (
@@ -88,9 +122,34 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
           Upstream
         </a>
         <p>Cloud-native work, matched to what you know.</p>
-        <a className="github-link" href="#how-it-works">
-          How it works <span aria-hidden="true">↓</span>
-        </a>
+        <div className="header-actions">
+          <button
+            className="theme-toggle"
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+          >
+            <span className="theme-toggle__track" aria-hidden="true">
+              <span className="theme-toggle__thumb">
+                {theme === "dark" ? (
+                  <svg viewBox="0 0 24 24">
+                    <path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42M18.36 5.64l-1.42 1.42M7.06 16.94l-1.42 1.42" />
+                    <circle cx="12" cy="12" r="3.5" />
+                  </svg>
+                ) : (
+                  <svg viewBox="0 0 24 24">
+                    <path d="M20.5 15.2A8.4 8.4 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z" />
+                  </svg>
+                )}
+              </span>
+            </span>
+            <span>{theme === "dark" ? "Light" : "Dark"}</span>
+          </button>
+          <a className="github-link" href="#how-it-works">
+            How it works <span aria-hidden="true">↓</span>
+          </a>
+        </div>
       </header>
 
       <section className="hero" id="top">
@@ -132,17 +191,36 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
       </section>
 
       <div className="content-shell">
-        <TrackerBoard issues={feed.issues} statuses={statuses} onSelectStatus={setStatusFilter} />
+        <TrackerBoard
+          issues={feed.issues}
+          statuses={statuses}
+          selectedStatuses={statusFilters}
+          onToggleStatus={toggleStatusFilter}
+          onShowAll={() => setStatusFilters([])}
+        />
 
         <div className="section-heading">
           <div>
             <p className="eyebrow">Opportunity feed</p>
-            <h2>{statusFilter === "all" ? "Ranked for you" : "Your tracked work"}</h2>
+            <h2>{statusFilters.length === 0 ? "Ranked for you" : "Your tracked work"}</h2>
           </div>
           <span>
             {Math.min(visibleLimit, visibleIssues.length)} of {visibleIssues.length} shown
           </span>
         </div>
+
+        {activeFilterCount > 0 && (
+          <div className="active-filter-summary" aria-live="polite">
+            <div>
+              <span className="active-filter-summary__dot" aria-hidden="true" />
+              <strong>{activeFilterCount}</strong>
+              <span>active {activeFilterCount === 1 ? "filter" : "filters"}</span>
+            </div>
+            <button type="button" onClick={resetFilters}>
+              Clear all filters <span aria-hidden="true">×</span>
+            </button>
+          </div>
+        )}
 
         <FilterBar
           domains={domains}
