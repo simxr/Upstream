@@ -37,7 +37,7 @@ Static Next.js interface ──────────────▶ browser l
 3. A scheduled GitHub Actions workflow records every successful check and preserves when the ranked feed last changed.
 4. A statically exported Next.js interface reads the feed and keeps personal tracking state in the browser.
 
-The daily scan runs at `03:17 UTC` (`08:47 IST`). `checked_at` advances after every successful scan; `changed_at` advances only when the ranked issue content or profile changes. This makes automation health visible without pretending an unchanged feed is stale.
+The daily scan runs at `03:17 UTC` (`08:47 IST`). `checked_at` advances after every successful scan; `changed_at` advances only when the ranked issue content or profile changes. After a successful refresh workflow, the Pages workflow rebuilds from the latest default branch so bot-authored feed commits are published automatically. This makes automation health visible without pretending an unchanged feed is stale.
 
 > **Hard guardrail:** Upstream is an intelligence tool, not an automation bot. It never claims issues, writes fixes, comments upstream, or generates pull requests. Every upstream interaction is human-owned.
 
