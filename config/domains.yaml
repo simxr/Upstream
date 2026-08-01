@@ -17,6 +17,12 @@ domains:
   - id: security-policy
     label: Security and policy
     description: Identity, authorization, supply-chain security, secrets, compliance, and policy enforcement.
+  - id: identity-access
+    label: Identity and access
+    description: OIDC, OAuth, SSO, identity providers, authentication flows, and access management.
+  - id: ci-cd-automation
+    label: CI/CD automation
+    description: Pipeline engines, build agents, runners, release workflows, and delivery automation.
   - id: platform-tooling
     label: Platform tooling
     description: Developer platforms, portals, cluster lifecycle, packaging, and platform APIs.

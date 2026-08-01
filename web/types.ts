@@ -33,7 +33,9 @@ export type FeedIssue = {
 };
 
 export type Feed = {
-  generated_at: string | null;
+  checked_at?: string | null;
+  changed_at?: string | null;
+  generated_at?: string | null;
   profile: string;
   total: number;
   issues: FeedIssue[];

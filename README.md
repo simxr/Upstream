@@ -8,7 +8,7 @@ Upstream is built for engineers who already think in Kubernetes, Terraform, and 
 
 ## ⚡ The Upstream difference
 
-- **Domain-driven, not language-driven:** Filter by platform-engineering concepts such as `infrastructure-as-code`, `kubernetes-controllers`, `gitops-delivery`, and `aws-ecosystem`.
+- **Domain-driven, not language-driven:** Filter by platform-engineering concepts such as `infrastructure-as-code`, `kubernetes-controllers`, `observability`, `identity-access`, and `ci-cd-automation`.
 - **Contribution shapes:** See whether an issue calls for a `bug-fix`, `docs`, `chart-config`, `tests`, or a feature before opening it.
 - **Skill-profile matching:** Cross-reference issues with `config/profile.yaml` and get a plain-language explanation of every match.
 - **Curated signal, low noise:** Search a deliberately narrow allowlist drawn from the CNCF Landscape and hand-picked AWS projects—not the whole of GitHub.
@@ -34,8 +34,10 @@ Static Next.js interface ──────────────▶ browser l
 
 1. The Go generator searches only configured repositories for maintainer-labeled contribution opportunities.
 2. Deterministic rules map issues against domain, contribution-shape, and personal-skill taxonomies.
-3. A scheduled GitHub Actions workflow commits a refreshed static feed when the result changes.
+3. A scheduled GitHub Actions workflow records every successful check and preserves when the ranked feed last changed.
 4. A statically exported Next.js interface reads the feed and keeps personal tracking state in the browser.
+
+The daily scan runs at `03:17 UTC` (`08:47 IST`). `checked_at` advances after every successful scan; `changed_at` advances only when the ranked issue content or profile changes. This makes automation health visible without pretending an unchanged feed is stale.
 
 > **Hard guardrail:** Upstream is an intelligence tool, not an automation bot. It never claims issues, writes fixes, comments upstream, or generates pull requests. Every upstream interaction is human-owned.
 

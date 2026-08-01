@@ -8,13 +8,14 @@ import (
 	"time"
 )
 
-func TestFeedMatchesIgnoresGenerationTime(t *testing.T) {
+func TestFeedContentMatchesIgnoresRefreshTimes(t *testing.T) {
 	issues := []FeedIssue{{ID: "example/project#1", Repository: "example/project", Number: 1}}
 	existing := Feed{
-		GeneratedAt: time.Now().Add(-time.Hour),
-		Profile:     "Tester",
-		Total:       len(issues),
-		Issues:      issues,
+		CheckedAt: time.Now(),
+		ChangedAt: time.Now().Add(-time.Hour),
+		Profile:   "Tester",
+		Total:     len(issues),
+		Issues:    issues,
 	}
 	contents, err := json.Marshal(existing)
 	if err != nil {
@@ -25,10 +26,37 @@ func TestFeedMatchesIgnoresGenerationTime(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if !feedMatches(path, "Tester", issues) {
+	loaded, err := readFeed(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !feedContentMatches(loaded, "Tester", issues) {
 		t.Fatal("expected identical issue content to match")
 	}
-	if feedMatches(path, "Someone else", issues) {
+	if feedContentMatches(loaded, "Someone else", issues) {
 		t.Fatal("expected a different profile not to match")
+	}
+}
+
+func TestResolveChangedAtPreservesPreviousChangeTime(t *testing.T) {
+	checkedAt := time.Date(2026, time.August, 2, 3, 17, 0, 0, time.UTC)
+	changedAt := checkedAt.Add(-12 * time.Hour)
+	previous := Feed{ChangedAt: changedAt}
+
+	if got := resolveChangedAt(previous, true, checkedAt); !got.Equal(changedAt) {
+		t.Fatalf("expected unchanged feed to preserve %s, got %s", changedAt, got)
+	}
+	if got := resolveChangedAt(previous, false, checkedAt); !got.Equal(checkedAt) {
+		t.Fatalf("expected changed feed to use check time %s, got %s", checkedAt, got)
+	}
+}
+
+func TestResolveChangedAtMigratesLegacyGeneratedAt(t *testing.T) {
+	checkedAt := time.Date(2026, time.August, 2, 3, 17, 0, 0, time.UTC)
+	legacyGeneratedAt := checkedAt.Add(-24 * time.Hour)
+	previous := Feed{LegacyGeneratedAt: &legacyGeneratedAt}
+
+	if got := resolveChangedAt(previous, true, checkedAt); !got.Equal(legacyGeneratedAt) {
+		t.Fatalf("expected legacy generation time %s, got %s", legacyGeneratedAt, got)
 	}
 }

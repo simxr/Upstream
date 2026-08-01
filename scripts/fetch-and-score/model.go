@@ -103,8 +103,10 @@ type FeedIssue struct {
 }
 
 type Feed struct {
-	GeneratedAt time.Time   `json:"generated_at"`
-	Profile     string      `json:"profile"`
-	Total       int         `json:"total"`
-	Issues      []FeedIssue `json:"issues"`
+	CheckedAt         time.Time   `json:"checked_at"`
+	ChangedAt         time.Time   `json:"changed_at"`
+	LegacyGeneratedAt *time.Time  `json:"generated_at,omitempty"`
+	Profile           string      `json:"profile"`
+	Total             int         `json:"total"`
+	Issues            []FeedIssue `json:"issues"`
 }

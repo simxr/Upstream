@@ -5,6 +5,11 @@ domains:
   - kubernetes-controllers
   - platform-tooling
   - gitops-delivery
+  - observability
+  - service-mesh
+  - security-policy
+  - identity-access
+  - ci-cd-automation
 preferred_shapes:
   - bug-fix
   - tests
@@ -13,7 +18,7 @@ preferred_shapes:
 skills:
   - id: terraform
     label: Terraform
-    keywords: [terraform, terragrunt, hcl, provider, module]
+    keywords: [terraform, terragrunt, opentofu, open tofu, hcl, provider, module]
   - id: helm
     label: Helm
     keywords: [helm, chart, values.yaml, template, release]
@@ -28,10 +33,28 @@ skills:
     keywords: [csi, storageclass, persistentvolume, ebs, efs, volume]
   - id: networking-ingress
     label: Kubernetes networking and ingress
-    keywords: [ingress, gateway, load balancer, networking, cni, dns, alb, nlb]
+    keywords: [ingress, gateway, load balancer, networking, cni, cilium, traefik, cert-manager, certificate, tls, dns, alb, nlb]
   - id: gitops
     label: GitOps
     keywords: [gitops, argocd, argo cd, flux, reconciliation]
   - id: go
     label: Go
     keywords: [golang, go code, go.mod]
+  - id: aws-compute
+    label: AWS compute and node lifecycle
+    keywords: [ec2, autoscaling, auto scaling, launch template, instance type, node group, nodegroup]
+  - id: kubernetes-platform
+    label: Kubernetes and operators
+    keywords: [kubernetes, k8s, operator, controller, custom resource, crd, admission webhook]
+  - id: developer-workspaces
+    label: Cloud developer workspaces
+    keywords: [eclipse che, devworkspace, dev workspace, devfile, workspace operator]
+  - id: identity-oidc
+    label: Keycloak and OIDC
+    keywords: [keycloak, oidc, openid connect, oauth, oauth2, single sign-on, sso, identity provider]
+  - id: observability-stack
+    label: Grafana and Prometheus observability
+    keywords: [grafana, prometheus, alertmanager, kube-prometheus, metrics, telemetry, tracing, alerting]
+  - id: cicd-pipelines
+    label: CI/CD pipelines
+    keywords: [azure pipelines, azure devops, gitlab ci, gitlab runner, jenkins, pipeline, build agent]

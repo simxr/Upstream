@@ -178,11 +178,16 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
         <div className="hero-stat">
           <strong>{feed.total}</strong>
           <span>open opportunities</span>
-          <small>
-            {feed.generated_at
-              ? `Refreshed ${new Date(feed.generated_at).toLocaleDateString("en", { day: "numeric", month: "short" })}`
-              : "Feed not generated yet"}
-          </small>
+          <dl className="feed-freshness">
+            <div>
+              <dt>Last checked</dt>
+              <dd>{formatCheckedAt(feed.checked_at ?? feed.generated_at)}</dd>
+            </div>
+            <div>
+              <dt>Feed last changed</dt>
+              <dd>{formatChangedAt(feed.changed_at ?? feed.generated_at)}</dd>
+            </div>
+          </dl>
         </div>
       </section>
 
@@ -287,4 +292,30 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
       </footer>
     </main>
   );
+}
+
+function formatCheckedAt(value?: string | null) {
+  if (!value) return "Not checked yet";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Unknown";
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "Asia/Kolkata",
+    timeZoneName: "short",
+  }).format(date);
+}
+
+function formatChangedAt(value?: string | null) {
+  if (!value) return "No changes yet";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "Unknown";
+  return new Intl.DateTimeFormat("en-IN", {
+    day: "numeric",
+    month: "short",
+    timeZone: "Asia/Kolkata",
+  }).format(date);
 }

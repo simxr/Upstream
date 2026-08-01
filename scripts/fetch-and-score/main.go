@@ -29,7 +29,7 @@ func run(configDir, output, apiURL, token string) error {
 		return err
 	}
 
-	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 8*time.Minute)
 	defer cancel()
 
 	client := newGitHubClient(apiURL, token)
@@ -38,15 +38,16 @@ func run(configDir, output, apiURL, token string) error {
 		return err
 	}
 	issues := scoreCandidates(candidates, config)
-	if feedMatches(output, config.Profile.Name, issues) {
-		fmt.Printf("feed is unchanged at %s\n", output)
-		return nil
-	}
+	checkedAt := time.Now().UTC().Truncate(time.Second)
+	previous, _ := readFeed(output)
+	contentUnchanged := feedContentMatches(previous, config.Profile.Name, issues)
+	changedAt := resolveChangedAt(previous, contentUnchanged, checkedAt)
 	feed := Feed{
-		GeneratedAt: time.Now().UTC().Truncate(time.Second),
-		Profile:     config.Profile.Name,
-		Total:       len(issues),
-		Issues:      issues,
+		CheckedAt: checkedAt,
+		ChangedAt: changedAt,
+		Profile:   config.Profile.Name,
+		Total:     len(issues),
+		Issues:    issues,
 	}
 
 	contents, err := json.MarshalIndent(feed, "", "  ")
@@ -57,20 +58,41 @@ func run(configDir, output, apiURL, token string) error {
 	if err := writeAtomically(output, contents); err != nil {
 		return err
 	}
-	fmt.Printf("wrote %d ranked issues to %s\n", len(issues), output)
+	if contentUnchanged {
+		fmt.Printf("checked feed at %s; ranked issue content is unchanged\n", checkedAt.Format(time.RFC3339))
+	} else {
+		fmt.Printf("wrote %d ranked issues to %s\n", len(issues), output)
+	}
 	return nil
 }
 
-func feedMatches(path, profile string, issues []FeedIssue) bool {
+func readFeed(path string) (Feed, error) {
 	contents, err := os.ReadFile(path)
 	if err != nil {
-		return false
+		return Feed{}, err
 	}
 	var existing Feed
 	if err := json.Unmarshal(contents, &existing); err != nil {
-		return false
+		return Feed{}, err
 	}
+	return existing, nil
+}
+
+func feedContentMatches(existing Feed, profile string, issues []FeedIssue) bool {
 	return existing.Profile == profile && reflect.DeepEqual(existing.Issues, issues)
+}
+
+func resolveChangedAt(previous Feed, contentUnchanged bool, checkedAt time.Time) time.Time {
+	if !contentUnchanged {
+		return checkedAt
+	}
+	if !previous.ChangedAt.IsZero() {
+		return previous.ChangedAt
+	}
+	if previous.LegacyGeneratedAt != nil {
+		return *previous.LegacyGeneratedAt
+	}
+	return checkedAt
 }
 
 func writeAtomically(path string, contents []byte) error {

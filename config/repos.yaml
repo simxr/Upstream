@@ -60,3 +60,42 @@ repositories:
   - repo: kubeflow/kubeflow
     source: cncf-landscape
     domains: [platform-tooling, kubernetes-controllers]
+  - repo: gruntwork-io/terragrunt
+    source: manual
+    domains: [infrastructure-as-code, platform-tooling]
+  - repo: cilium/cilium
+    source: cncf-landscape
+    domains: [kubernetes-controllers, service-mesh, platform-tooling]
+  - repo: traefik/traefik
+    source: cncf-landscape
+    domains: [service-mesh, kubernetes-controllers, platform-tooling]
+  - repo: cert-manager/cert-manager
+    source: cncf-landscape
+    domains: [security-policy, kubernetes-controllers]
+  - repo: eclipse-che/che-server
+    source: manual
+    domains: [platform-tooling]
+  - repo: devfile/devworkspace-operator
+    source: manual
+    domains: [platform-tooling, kubernetes-controllers]
+  - repo: keycloak/keycloak
+    source: manual
+    domains: [identity-access, security-policy, platform-tooling]
+  - repo: grafana/grafana
+    source: manual
+    domains: [observability, platform-tooling]
+  - repo: prometheus/prometheus
+    source: cncf-landscape
+    domains: [observability]
+  - repo: prometheus-community/helm-charts
+    source: manual
+    domains: [observability, kubernetes-controllers, platform-tooling]
+  - repo: microsoft/azure-pipelines-agent
+    source: manual
+    domains: [ci-cd-automation, platform-tooling]
+  - repo: gitlabhq/gitlab-runner
+    source: manual
+    domains: [ci-cd-automation, platform-tooling]
+  - repo: jenkinsci/jenkins
+    source: manual
+    domains: [ci-cd-automation, platform-tooling]
