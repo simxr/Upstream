@@ -1,11 +1,12 @@
 # Feed generator
 
-This Go command reads the curated Upstream configuration, makes read-only requests to GitHub's repository issues endpoint, filters for configured newcomer/help labels, applies deterministic scoring, and writes the static JSON feed.
+This Go command reads the curated Upstream configuration, makes read-only GitHub requests, scores approachable issues, and records merged pull requests authored by the configured profile across the curated repository set.
 
 ```bash
 go run ./scripts/fetch-and-score \
   -config-dir ./config \
-  -output ./data/feed.json
+  -output ./data/feed.json \
+  -journey-output ./data/journey.json
 ```
 
 Environment variables:
@@ -13,4 +14,4 @@ Environment variables:
 - `GITHUB_TOKEN`: optional read-only token used for higher API limits.
 - `GITHUB_API_URL`: optional API base URL, primarily for GitHub Enterprise or testing.
 
-The command fails the whole refresh if a configured repository cannot be read. This prevents a partial feed from silently hiding a broken or renamed seed repository.
+The command fails the whole refresh if a configured repository, issue search, or contribution search cannot be read. This prevents partial data from silently hiding a broken seed repository or an incomplete evidence trail.

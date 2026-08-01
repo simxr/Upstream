@@ -169,6 +169,55 @@ func (client *GitHubClient) searchRepository(ctx context.Context, repository Rep
 	return issues, nil
 }
 
+func (client *GitHubClient) searchMergedPullRequests(ctx context.Context, repository, username string) ([]GitHubIssue, error) {
+	query := fmt.Sprintf(
+		"repo:%s is:pr is:merged author:%s",
+		repository,
+		username,
+	)
+
+	var pullRequests []GitHubIssue
+	for page := 1; page <= maxSearchPages; page++ {
+		parameters := url.Values{}
+		parameters.Set("q", query)
+		parameters.Set("sort", "updated")
+		parameters.Set("order", "desc")
+		parameters.Set("per_page", "100")
+		parameters.Set("page", strconv.Itoa(page))
+		endpoint := client.BaseURL + "/search/issues?" + parameters.Encode()
+
+		request, err := client.newRequest(ctx, endpoint)
+		if err != nil {
+			return nil, err
+		}
+		response, err := client.doWithRateLimit(ctx, request)
+		if err != nil {
+			return nil, err
+		}
+		body, readErr := io.ReadAll(io.LimitReader(response.Body, 10<<20))
+		closeErr := response.Body.Close()
+		if readErr != nil {
+			return nil, readErr
+		}
+		if closeErr != nil {
+			return nil, closeErr
+		}
+		if response.StatusCode != http.StatusOK {
+			return nil, githubResponseError(response, body)
+		}
+
+		var result searchResponse
+		if err := json.Unmarshal(body, &result); err != nil {
+			return nil, fmt.Errorf("decode merged pull request page %d: %w", page, err)
+		}
+		pullRequests = append(pullRequests, result.Items...)
+		if len(result.Items) < 100 || len(pullRequests) >= result.TotalCount {
+			break
+		}
+	}
+	return pullRequests, nil
+}
+
 func (client *GitHubClient) newRequest(ctx context.Context, endpoint string) (*http.Request, error) {
 	request, err := http.NewRequestWithContext(ctx, http.MethodGet, endpoint, nil)
 	if err != nil {

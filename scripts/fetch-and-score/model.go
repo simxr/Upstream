@@ -42,6 +42,8 @@ type Skill struct {
 
 type Profile struct {
 	Name            string   `yaml:"name"`
+	Slug            string   `yaml:"slug"`
+	GitHubUsername  string   `yaml:"github_username"`
 	Domains         []string `yaml:"domains"`
 	PreferredShapes []string `yaml:"preferred_shapes"`
 	Skills          []Skill  `yaml:"skills"`
@@ -59,17 +61,21 @@ type GitHubLabel struct {
 }
 
 type GitHubIssue struct {
-	Number        int           `json:"number"`
-	Title         string        `json:"title"`
-	Body          string        `json:"body"`
-	HTMLURL       string        `json:"html_url"`
-	RepositoryURL string        `json:"repository_url"`
-	State         string        `json:"state"`
-	Labels        []GitHubLabel `json:"labels"`
-	Assignees     []struct{}    `json:"assignees"`
-	PullRequest   *struct{}     `json:"pull_request,omitempty"`
-	CreatedAt     time.Time     `json:"created_at"`
-	UpdatedAt     time.Time     `json:"updated_at"`
+	Number        int                `json:"number"`
+	Title         string             `json:"title"`
+	Body          string             `json:"body"`
+	HTMLURL       string             `json:"html_url"`
+	RepositoryURL string             `json:"repository_url"`
+	State         string             `json:"state"`
+	Labels        []GitHubLabel      `json:"labels"`
+	Assignees     []struct{}         `json:"assignees"`
+	PullRequest   *GitHubPullRequest `json:"pull_request,omitempty"`
+	CreatedAt     time.Time          `json:"created_at"`
+	UpdatedAt     time.Time          `json:"updated_at"`
+}
+
+type GitHubPullRequest struct {
+	MergedAt *time.Time `json:"merged_at"`
 }
 
 type Candidate struct {
@@ -109,7 +115,27 @@ type Feed struct {
 	ChangedAt         time.Time   `json:"changed_at"`
 	LegacyGeneratedAt *time.Time  `json:"generated_at,omitempty"`
 	Profile           string      `json:"profile"`
+	ProfileSlug       string      `json:"profile_slug"`
 	ProfileTags       []string    `json:"profile_tags"`
 	Total             int         `json:"total"`
 	Issues            []FeedIssue `json:"issues"`
+}
+
+type JourneyEntry struct {
+	Repository  string    `json:"repository"`
+	PRNumber    int       `json:"pr_number"`
+	PRURL       string    `json:"pr_url"`
+	Title       string    `json:"title"`
+	DomainTags  []string  `json:"domain_tags"`
+	ShapeTags   []string  `json:"shape_tags"`
+	MergedAt    time.Time `json:"merged_at"`
+	LinkedIssue string    `json:"linked_issue,omitempty"`
+}
+
+type Journey struct {
+	GeneratedAt    time.Time      `json:"generated_at"`
+	Name           string         `json:"name"`
+	Slug           string         `json:"slug"`
+	GitHubUsername string         `json:"github_username"`
+	Entries        []JourneyEntry `json:"entries"`
 }

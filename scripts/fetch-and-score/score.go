@@ -20,12 +20,7 @@ func scoreCandidates(candidates []Candidate, config Config) []FeedIssue {
 	profileDomains := toSet(config.Profile.Domains)
 	preferredShapes := toSet(config.Profile.PreferredShapes)
 
-	shapeByAlias := map[string]Shape{}
-	for _, shape := range config.Shapes.Shapes {
-		for _, alias := range shape.LabelAliases {
-			shapeByAlias[normalizeLabel(alias)] = shape
-		}
-	}
+	shapeByAlias := shapeAliases(config.Shapes)
 
 	feedIssues := make([]FeedIssue, 0, len(candidates))
 	for _, candidate := range candidates {
@@ -96,6 +91,16 @@ func scoreCandidates(candidates []Candidate, config Config) []FeedIssue {
 		return feedIssues[left].UpdatedAt.After(feedIssues[right].UpdatedAt)
 	})
 	return feedIssues
+}
+
+func shapeAliases(config ShapesConfig) map[string]Shape {
+	shapeByAlias := map[string]Shape{}
+	for _, shape := range config.Shapes {
+		for _, alias := range shape.LabelAliases {
+			shapeByAlias[normalizeLabel(alias)] = shape
+		}
+	}
+	return shapeByAlias
 }
 
 func inferShapes(labels []GitHubLabel, shapeByAlias map[string]Shape) []string {

@@ -1,4 +1,6 @@
 name: Simar
+slug: simar
+github_username: simxr
 domains:
   - aws-ecosystem
   - infrastructure-as-code

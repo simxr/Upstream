@@ -1,8 +1,8 @@
-import { trackerStatuses, type FeedIssue, type TrackerStatus } from "@/types";
+import { trackerStatuses, type FeedIssue, type TrackerEntry, type TrackerStatus } from "@/types";
 
 type TrackerBoardProps = {
   issues: FeedIssue[];
-  statuses: Record<string, TrackerStatus>;
+  entries: Record<string, TrackerEntry>;
   selectedStatuses: TrackerStatus[];
   onToggleStatus: (status: TrackerStatus) => void;
   onShowAll: () => void;
@@ -10,7 +10,7 @@ type TrackerBoardProps = {
 
 export function TrackerBoard({
   issues,
-  statuses,
+  entries,
   selectedStatuses,
   onToggleStatus,
   onShowAll,
@@ -30,7 +30,7 @@ export function TrackerBoard({
         <strong>{issues.length}</strong>
       </button>
       {activeStatuses.map((item) => {
-        const count = issues.filter((issue) => statuses[issue.id] === item.value).length;
+        const count = issues.filter((issue) => entries[issue.id]?.status === item.value).length;
         const isSelected = selectedStatuses.includes(item.value);
         return (
           <button

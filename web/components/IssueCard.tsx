@@ -1,13 +1,19 @@
 import { displayTag } from "./FilterBar";
-import { trackerStatuses, type FeedIssue, type TrackerStatus } from "@/types";
+import { parseGitHubPullRequestUrl } from "@/lib/github";
+import { trackerStatuses, type FeedIssue, type TrackerEntry, type TrackerStatus } from "@/types";
 
 type IssueCardProps = {
   issue: FeedIssue;
-  status: TrackerStatus;
+  entry?: TrackerEntry;
   onStatusChange: (status: TrackerStatus) => void;
+  onPRUrlChange: (url: string) => void;
 };
 
-export function IssueCard({ issue, status, onStatusChange }: IssueCardProps) {
+export function IssueCard({ issue, entry, onStatusChange, onPRUrlChange }: IssueCardProps) {
+  const status = entry?.status ?? "untracked";
+  const parsedPR = parseGitHubPullRequestUrl(entry?.prUrl ?? "");
+  const showPREditor = status === "pr-submitted" || Boolean(entry?.prUrl);
+
   return (
     <article className="issue-card">
       <div className="issue-card__topline">
@@ -73,6 +79,34 @@ export function IssueCard({ issue, status, onStatusChange }: IssueCardProps) {
           </select>
         </label>
       </div>
+
+      {showPREditor && (
+        <div className="pr-link-editor">
+          <label htmlFor={`pr-url-${issue.id}`}>Linked pull request</label>
+          <div>
+            <input
+              id={`pr-url-${issue.id}`}
+              type="url"
+              inputMode="url"
+              autoFocus={status === "pr-submitted" && !entry?.prUrl}
+              value={entry?.prUrl ?? ""}
+              onChange={(event) => onPRUrlChange(event.target.value)}
+              placeholder={`https://github.com/${issue.repository}/pull/123`}
+              aria-invalid={Boolean(entry?.prUrl) && !parsedPR}
+            />
+            {parsedPR && (
+              <a href={entry?.prUrl} target="_blank" rel="noreferrer">
+                Open PR #{parsedPR.number} <span aria-hidden="true">↗</span>
+              </a>
+            )}
+          </div>
+          <small>
+            {entry?.prUrl && !parsedPR
+              ? "Use a complete github.com/owner/repo/pull/number URL."
+              : "Saved only in this browser. Add the upstream PR URL to enable status sync."}
+          </small>
+        </div>
+      )}
 
       <details className="audit-trail">
         <summary>Why this score</summary>

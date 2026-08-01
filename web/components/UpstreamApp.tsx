@@ -1,16 +1,18 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { FilterBar } from "./FilterBar";
+import { GitHubSyncPanel } from "./GitHubSyncPanel";
 import { IssueCard } from "./IssueCard";
+import { ThemeToggle } from "./ThemeToggle";
 import { TrackerBoard } from "./TrackerBoard";
-import type { Feed, TrackerStatus } from "@/types";
+import { migrateTrackerEntries, parseGitHubPullRequestUrl } from "@/lib/github";
+import type { Feed, TrackerEntry, TrackerStatus } from "@/types";
 
-const storageKey = "upstream.issue-statuses.v1";
-const themeStorageKey = "upstream.theme.v1";
+const storageKey = "upstream.issue-tracker.v2";
+const legacyStorageKey = "upstream.issue-statuses.v1";
 const pageSize = 30;
-
-type Theme = "dark" | "light";
 
 export function UpstreamApp({ feed }: { feed: Feed }) {
   const [query, setQuery] = useState("");
@@ -18,19 +20,13 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
   const [shape, setShape] = useState("all");
   const [statusFilters, setStatusFilters] = useState<TrackerStatus[]>([]);
   const [visibleLimit, setVisibleLimit] = useState(pageSize);
-  const [statuses, setStatuses] = useState<Record<string, TrackerStatus>>({});
+  const [entries, setEntries] = useState<Record<string, TrackerEntry>>({});
   const [trackerLoaded, setTrackerLoaded] = useState(false);
-  const [theme, setTheme] = useState<Theme>("dark");
-
-  useEffect(() => {
-    const currentTheme = document.documentElement.dataset.theme === "light" ? "light" : "dark";
-    setTheme(currentTheme);
-  }, []);
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem(storageKey);
-      if (saved) setStatuses(JSON.parse(saved) as Record<string, TrackerStatus>);
+      const saved = window.localStorage.getItem(storageKey) ?? window.localStorage.getItem(legacyStorageKey);
+      if (saved) setEntries(migrateTrackerEntries(JSON.parse(saved) as unknown));
     } catch {
       window.localStorage.removeItem(storageKey);
     } finally {
@@ -39,8 +35,8 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
   }, []);
 
   useEffect(() => {
-    if (trackerLoaded) window.localStorage.setItem(storageKey, JSON.stringify(statuses));
-  }, [statuses, trackerLoaded]);
+    if (trackerLoaded) window.localStorage.setItem(storageKey, JSON.stringify(entries));
+  }, [entries, trackerLoaded]);
 
   const domains = useMemo(
     () => [...new Set(feed.issues.flatMap((issue) => issue.domain_tags))].sort(),
@@ -61,11 +57,11 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
         issue.technical_tags.some((tag) => tag.includes(normalizedQuery));
       const matchesDomain = domain === "all" || issue.domain_tags.includes(domain);
       const matchesShape = shape === "all" || issue.shape_tags.includes(shape);
-      const issueStatus = statuses[issue.id] ?? "untracked";
+      const issueStatus = entries[issue.id]?.status ?? "untracked";
       const matchesStatus = statusFilters.length === 0 || statusFilters.includes(issueStatus);
       return matchesQuery && matchesDomain && matchesShape && matchesStatus;
     });
-  }, [domain, feed.issues, query, shape, statusFilters, statuses]);
+  }, [domain, entries, feed.issues, query, shape, statusFilters]);
 
   useEffect(() => {
     setVisibleLimit(pageSize);
@@ -79,11 +75,35 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
     Number(shape !== "all");
 
   function updateStatus(id: string, status: TrackerStatus) {
-    setStatuses((current) => {
+    setEntries((current) => {
       const next = { ...current };
       if (status === "untracked") delete next[id];
-      else next[id] = status;
+      else next[id] = { ...current[id], status };
       return next;
+    });
+  }
+
+  function updatePRUrl(id: string, prUrl: string) {
+    setEntries((current) => {
+      const existing = current[id];
+      if (!existing) return current;
+      const parsed = parseGitHubPullRequestUrl(prUrl);
+      return {
+        ...current,
+        [id]: {
+          ...existing,
+          ...(prUrl ? { prUrl } : { prUrl: undefined }),
+          ...(parsed ? { prNumber: parsed.number } : { prNumber: undefined }),
+        },
+      };
+    });
+  }
+
+  function patchEntry(id: string, patch: Partial<TrackerEntry>) {
+    setEntries((current) => {
+      const existing = current[id];
+      if (!existing) return current;
+      return { ...current, [id]: { ...existing, ...patch } };
     });
   }
 
@@ -100,18 +120,6 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
         ? current.filter((item) => item !== status)
         : [...current, status],
     );
-  }
-
-  function toggleTheme() {
-    const nextTheme: Theme = theme === "dark" ? "light" : "dark";
-    document.documentElement.dataset.theme = nextTheme;
-    setTheme(nextTheme);
-
-    try {
-      window.localStorage.setItem(themeStorageKey, nextTheme);
-    } catch {
-      // The selected theme still applies for this visit when storage is unavailable.
-    }
   }
 
   return (
@@ -135,32 +143,15 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
         </a>
         <p>Cloud-native work, matched to what you know.</p>
         <div className="header-actions">
-          <button
-            className="theme-toggle"
-            type="button"
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            title={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-          >
-            <span className="theme-toggle__track" aria-hidden="true">
-              <span className="theme-toggle__thumb">
-                {theme === "dark" ? (
-                  <svg viewBox="0 0 24 24">
-                    <path d="M12 3v2m0 14v2M3 12h2m14 0h2M5.64 5.64l1.42 1.42m9.88 9.88 1.42 1.42M18.36 5.64l-1.42 1.42M7.06 16.94l-1.42 1.42" />
-                    <circle cx="12" cy="12" r="3.5" />
-                  </svg>
-                ) : (
-                  <svg viewBox="0 0 24 24">
-                    <path d="M20.5 15.2A8.4 8.4 0 0 1 8.8 3.5 8.5 8.5 0 1 0 20.5 15.2Z" />
-                  </svg>
-                )}
-              </span>
-            </span>
-            <span>{theme === "dark" ? "Light" : "Dark"}</span>
-          </button>
+          <ThemeToggle />
           <a className="github-link" href="#how-it-works">
             How it works <span aria-hidden="true">↓</span>
           </a>
+          {feed.profile_slug && (
+            <Link className="github-link" href={`/journey/${feed.profile_slug}`}>
+              Journey <span aria-hidden="true">↗</span>
+            </Link>
+          )}
         </div>
       </header>
 
@@ -224,11 +215,13 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
       <div className="content-shell">
         <TrackerBoard
           issues={feed.issues}
-          statuses={statuses}
+          entries={entries}
           selectedStatuses={statusFilters}
           onToggleStatus={toggleStatusFilter}
           onShowAll={() => setStatusFilters([])}
         />
+
+        <GitHubSyncPanel entries={entries} onEntryPatch={patchEntry} />
 
         <div className="section-heading">
           <div>
@@ -270,8 +263,9 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
               <IssueCard
                 key={issue.id}
                 issue={issue}
-                status={statuses[issue.id] ?? "untracked"}
+                entry={entries[issue.id]}
                 onStatusChange={(status) => updateStatus(issue.id, status)}
+                onPRUrlChange={(url) => updatePRUrl(issue.id, url)}
               />
             ))}
             {visibleLimit < visibleIssues.length && (

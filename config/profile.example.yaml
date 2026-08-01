@@ -1,0 +1,16 @@
+name: Your Name
+slug: your-name
+github_username: your-github-handle
+domains:
+  - kubernetes-controllers
+  - infrastructure-as-code
+preferred_shapes:
+  - bug-fix
+  - docs
+skills:
+  - id: terraform
+    label: Terraform
+    keywords: [terraform, terragrunt, opentofu, hcl]
+  - id: helm
+    label: Helm
+    keywords: [helm, chart, values.yaml]

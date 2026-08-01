@@ -11,3 +11,4 @@ bin/
 .tools/
 *.tsbuildinfo
 web/public/feed.json
+web/public/journey.json

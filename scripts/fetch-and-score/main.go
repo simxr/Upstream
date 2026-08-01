@@ -14,16 +14,17 @@ import (
 func main() {
 	configDir := flag.String("config-dir", "config", "directory containing Upstream YAML configuration")
 	output := flag.String("output", "data/feed.json", "path for the generated JSON feed")
+	journeyOutput := flag.String("journey-output", "data/journey.json", "path for the generated contribution journey")
 	apiURL := flag.String("github-api-url", envOrDefault("GITHUB_API_URL", "https://api.github.com"), "GitHub API base URL")
 	flag.Parse()
 
-	if err := run(*configDir, *output, *apiURL, os.Getenv("GITHUB_TOKEN")); err != nil {
+	if err := run(*configDir, *output, *journeyOutput, *apiURL, os.Getenv("GITHUB_TOKEN")); err != nil {
 		fmt.Fprintln(os.Stderr, "upstream:", err)
 		os.Exit(1)
 	}
 }
 
-func run(configDir, output, apiURL, token string) error {
+func run(configDir, output, journeyOutput, apiURL, token string) error {
 	config, err := loadConfig(configDir)
 	if err != nil {
 		return err
@@ -40,13 +41,18 @@ func run(configDir, output, apiURL, token string) error {
 	issues := scoreCandidates(candidates, config)
 	profileTags := profileTagLabels(config.Profile)
 	checkedAt := time.Now().UTC().Truncate(time.Second)
+	journey, err := buildJourney(ctx, client, config, checkedAt)
+	if err != nil {
+		return err
+	}
 	previous, _ := readFeed(output)
-	contentUnchanged := feedContentMatches(previous, config.Profile.Name, profileTags, issues)
+	contentUnchanged := feedContentMatches(previous, config.Profile.Name, config.Profile.Slug, profileTags, issues)
 	changedAt := resolveChangedAt(previous, contentUnchanged, checkedAt)
 	feed := Feed{
 		CheckedAt:   checkedAt,
 		ChangedAt:   changedAt,
 		Profile:     config.Profile.Name,
+		ProfileSlug: config.Profile.Slug,
 		ProfileTags: profileTags,
 		Total:       len(issues),
 		Issues:      issues,
@@ -57,7 +63,15 @@ func run(configDir, output, apiURL, token string) error {
 		return fmt.Errorf("encode feed: %w", err)
 	}
 	contents = append(contents, '\n')
+	journeyContents, err := json.MarshalIndent(journey, "", "  ")
+	if err != nil {
+		return fmt.Errorf("encode journey: %w", err)
+	}
+	journeyContents = append(journeyContents, '\n')
 	if err := writeAtomically(output, contents); err != nil {
+		return err
+	}
+	if err := writeAtomically(journeyOutput, journeyContents); err != nil {
 		return err
 	}
 	if contentUnchanged {
@@ -65,6 +79,7 @@ func run(configDir, output, apiURL, token string) error {
 	} else {
 		fmt.Printf("wrote %d ranked issues to %s\n", len(issues), output)
 	}
+	fmt.Printf("wrote %d merged pull requests to %s\n", len(journey.Entries), journeyOutput)
 	return nil
 }
 
@@ -80,8 +95,9 @@ func readFeed(path string) (Feed, error) {
 	return existing, nil
 }
 
-func feedContentMatches(existing Feed, profile string, profileTags []string, issues []FeedIssue) bool {
+func feedContentMatches(existing Feed, profile, profileSlug string, profileTags []string, issues []FeedIssue) bool {
 	return existing.Profile == profile &&
+		existing.ProfileSlug == profileSlug &&
 		reflect.DeepEqual(existing.ProfileTags, profileTags) &&
 		reflect.DeepEqual(existing.Issues, issues)
 }

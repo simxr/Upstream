@@ -4,10 +4,14 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"gopkg.in/yaml.v3"
 )
+
+var profileSlugPattern = regexp.MustCompile(`^[a-z0-9]+(?:-[a-z0-9]+)*$`)
+var githubUsernamePattern = regexp.MustCompile(`^[A-Za-z0-9](?:[A-Za-z0-9-]{0,37}[A-Za-z0-9])?$`)
 
 func loadConfig(dir string) (Config, error) {
 	var config Config
@@ -42,6 +46,12 @@ func loadConfig(dir string) (Config, error) {
 func validateConfig(config Config) error {
 	if strings.TrimSpace(config.Profile.Name) == "" {
 		return fmt.Errorf("config/profile.yaml: name is required")
+	}
+	if !profileSlugPattern.MatchString(config.Profile.Slug) {
+		return fmt.Errorf("config/profile.yaml: slug must be lowercase, URL-safe, and hyphen-separated")
+	}
+	if !githubUsernamePattern.MatchString(config.Profile.GitHubUsername) {
+		return fmt.Errorf("config/profile.yaml: github_username is invalid")
 	}
 	if len(config.Repositories.Repositories) == 0 {
 		return fmt.Errorf("config/repos.yaml: at least one repository is required")

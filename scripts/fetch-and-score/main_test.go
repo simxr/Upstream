@@ -15,6 +15,7 @@ func TestFeedContentMatchesIgnoresRefreshTimes(t *testing.T) {
 		CheckedAt:   time.Now(),
 		ChangedAt:   time.Now().Add(-time.Hour),
 		Profile:     "Tester",
+		ProfileSlug: "tester",
 		ProfileTags: []string{"Terraform"},
 		Total:       len(issues),
 		Issues:      issues,
@@ -32,14 +33,17 @@ func TestFeedContentMatchesIgnoresRefreshTimes(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !feedContentMatches(loaded, "Tester", []string{"Terraform"}, issues) {
+	if !feedContentMatches(loaded, "Tester", "tester", []string{"Terraform"}, issues) {
 		t.Fatal("expected identical issue content to match")
 	}
-	if feedContentMatches(loaded, "Someone else", []string{"Terraform"}, issues) {
+	if feedContentMatches(loaded, "Someone else", "tester", []string{"Terraform"}, issues) {
 		t.Fatal("expected a different profile not to match")
 	}
-	if feedContentMatches(loaded, "Tester", []string{"Helm"}, issues) {
+	if feedContentMatches(loaded, "Tester", "tester", []string{"Helm"}, issues) {
 		t.Fatal("expected different profile tags not to match")
+	}
+	if feedContentMatches(loaded, "Tester", "someone-else", []string{"Terraform"}, issues) {
+		t.Fatal("expected a different profile slug not to match")
 	}
 }
 

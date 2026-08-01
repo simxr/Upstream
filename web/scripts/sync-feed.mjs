@@ -4,10 +4,12 @@ import { fileURLToPath } from "node:url";
 
 const scriptDirectory = dirname(fileURLToPath(import.meta.url));
 const webRoot = resolve(scriptDirectory, "..");
-const source = resolve(webRoot, "..", "data", "feed.json");
 const destinationDirectory = resolve(webRoot, "public");
-const destination = resolve(destinationDirectory, "feed.json");
 
 await mkdir(destinationDirectory, { recursive: true });
-await copyFile(source, destination);
-console.log(`Copied ${source} to ${destination}`);
+for (const filename of ["feed.json", "journey.json"]) {
+  const source = resolve(webRoot, "..", "data", filename);
+  const destination = resolve(destinationDirectory, filename);
+  await copyFile(source, destination);
+  console.log(`Copied ${source} to ${destination}`);
+}
