@@ -1,7 +1,8 @@
 {
-  "checked_at": "2026-08-01T20:41:07Z",
-  "changed_at": "2026-08-01T20:41:07Z",
+  "checked_at": "2026-08-01T21:09:08Z",
+  "changed_at": "2026-08-01T21:09:08Z",
   "profile": "Simar",
+  "profile_slug": "simar",
   "profile_tags": [
     "AWS IAM and IRSA",
     "AWS compute and node lifecycle",
@@ -23095,7 +23096,7 @@
         "networking-ingress",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 8,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability, Kubernetes and operators and Kubernetes networking and ingress; preferred work: Bug fix.",
       "matches": [
@@ -23687,7 +23688,7 @@
         "observability-stack",
         "storage-csi"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 8,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability, Helm, Keycloak and OIDC and Kubernetes storage and CSI.",
       "matches": [
@@ -34239,7 +34240,7 @@
         "helm",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 7,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability and Helm; preferred work: Bug fix.",
       "matches": [
@@ -35286,7 +35287,7 @@
         "networking-ingress",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 7,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability, Helm and Kubernetes networking and ingress.",
       "matches": [
@@ -35699,7 +35700,7 @@
         "kubernetes-platform",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 7,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability, Helm and Kubernetes and operators.",
       "matches": [
@@ -36363,7 +36364,7 @@
         "networking-ingress",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 7,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability, Keycloak and OIDC and Kubernetes networking and ingress.",
       "matches": [
@@ -37299,7 +37300,7 @@
         "networking-ingress",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 7,
       "why": "Matches your domain: Observability and Platform tooling; skills: GitOps, Grafana and Prometheus observability and Kubernetes networking and ingress.",
       "matches": [
@@ -37699,7 +37700,7 @@
         "gitops",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 7,
       "why": "Matches your domain: Observability and Platform tooling; skills: GitOps and Grafana and Prometheus observability; preferred work: Bug fix.",
       "matches": [
@@ -44159,7 +44160,7 @@
         "gitops",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: GitOps and Grafana and Prometheus observability.",
       "matches": [
@@ -44271,7 +44272,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability; preferred work: Bug fix.",
       "matches": [
@@ -44530,7 +44531,7 @@
         "observability-stack",
         "terraform"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability and Terraform.",
       "matches": [
@@ -44964,7 +44965,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability; preferred work: Bug fix.",
       "matches": [
@@ -45735,7 +45736,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability; preferred work: Bug fix.",
       "matches": [
@@ -46005,7 +46006,7 @@
         "kubernetes-platform",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability and Kubernetes and operators.",
       "matches": [
@@ -46742,7 +46743,7 @@
         "kubernetes-platform",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability and Kubernetes and operators.",
       "matches": [
@@ -48005,7 +48006,7 @@
         "identity-oidc",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability and Keycloak and OIDC.",
       "matches": [
@@ -48356,7 +48357,7 @@
         "helm",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability and Helm.",
       "matches": [
@@ -48515,7 +48516,7 @@
         "helm",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability and Helm.",
       "matches": [
@@ -48617,7 +48618,7 @@
         "helm",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability and Helm.",
       "matches": [
@@ -48671,7 +48672,7 @@
         "cicd-pipelines",
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 6,
       "why": "Matches your domain: Observability and Platform tooling; skills: CI/CD pipelines and Grafana and Prometheus observability.",
       "matches": [
@@ -51039,7 +51040,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -51240,7 +51241,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -51436,7 +51437,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -52098,7 +52099,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -52146,7 +52147,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -52788,7 +52789,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -52836,7 +52837,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -53231,7 +53232,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -53657,7 +53658,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -53806,7 +53807,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -53854,7 +53855,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -53999,7 +54000,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -54149,7 +54150,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -55209,7 +55210,7 @@
       "technical_tags": [
         "observability-stack"
       ],
-      "stars": 75912,
+      "stars": 75914,
       "score": 5,
       "why": "Matches your domain: Observability and Platform tooling; skills: Grafana and Prometheus observability.",
       "matches": [
@@ -56874,7 +56875,7 @@
       ],
       "shape_tags": [],
       "technical_tags": [],
-      "stars": 75912,
+      "stars": 75914,
       "score": 4,
       "why": "Matches your domain: Observability and Platform tooling.",
       "matches": [
