@@ -7,7 +7,6 @@ discovery_labels:
   - first-timers-only
   - contributions-requested
   - contributor/good-first-issue
-  - contributor/wanted
 repositories:
   - repo: aws/karpenter-provider-aws
     source: manual
