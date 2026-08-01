@@ -29,12 +29,12 @@ export function IssueCard({ issue, status, onStatusChange }: IssueCardProps) {
 
       <div className="tag-row" aria-label="Issue classifications">
         {issue.domain_tags.map((tag) => (
-          <span className="tag tag--domain" key={tag}>
+          <span className="tag tag--domain" data-tag={tag} key={tag}>
             {displayTag(tag)}
           </span>
         ))}
         {issue.shape_tags.map((tag) => (
-          <span className="tag tag--shape" key={tag}>
+          <span className="tag tag--shape" data-tag={tag} key={tag}>
             {displayTag(tag)}
           </span>
         ))}

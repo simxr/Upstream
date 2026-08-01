@@ -154,7 +154,9 @@ export function UpstreamApp({ feed }: { feed: Feed }) {
 
       <section className="hero" id="top">
         <div>
-          <p className="eyebrow">A contribution radar for platform engineers</p>
+          <p className="terminal-kicker" aria-label="Upstream radar scan complete">
+            <span aria-hidden="true">upstream://radar — scan complete</span>
+          </p>
           <h1>Find upstream work<br />worth doing.</h1>
           <p className="hero-copy">
             A curated list of approachable Kubernetes and infrastructure issues, ranked against
