@@ -122,13 +122,15 @@ type Feed struct {
 }
 
 type JourneyEntry struct {
+	Kind        string    `json:"kind"`
 	Repository  string    `json:"repository"`
-	PRNumber    int       `json:"pr_number"`
-	PRURL       string    `json:"pr_url"`
+	Number      int       `json:"number"`
+	URL         string    `json:"url"`
 	Title       string    `json:"title"`
 	DomainTags  []string  `json:"domain_tags"`
 	ShapeTags   []string  `json:"shape_tags"`
-	MergedAt    time.Time `json:"merged_at"`
+	State       string    `json:"state,omitempty"`
+	OccurredAt  time.Time `json:"occurred_at"`
 	LinkedIssue string    `json:"linked_issue,omitempty"`
 }
 

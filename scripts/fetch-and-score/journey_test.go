@@ -9,18 +9,20 @@ import (
 	"time"
 )
 
-func TestBuildJourneyProducesVerifiableMergedEvidence(t *testing.T) {
+func TestBuildJourneyProducesVerifiableContributionEvidence(t *testing.T) {
 	mergedAt := "2026-07-30T12:34:56Z"
+	issueCreatedAt := "2026-07-01T09:30:18Z"
 	server := httptest.NewServer(http.HandlerFunc(func(response http.ResponseWriter, request *http.Request) {
 		if request.URL.Path != "/search/issues" {
 			t.Fatalf("unexpected request path %s", request.URL.Path)
 		}
 		query := request.URL.Query().Get("q")
-		if !strings.Contains(query, "repo:example/platform") || !strings.Contains(query, "is:pr is:merged author:test-user") {
+		if !strings.Contains(query, "repo:example/platform") || !strings.Contains(query, "author:test-user") {
 			t.Fatalf("unexpected journey query %q", query)
 		}
 		response.Header().Set("Content-Type", "application/json")
-		_, _ = response.Write([]byte(`{
+		if strings.Contains(query, "is:pr is:merged") {
+			_, _ = response.Write([]byte(`{
           "total_count": 1,
           "items": [{
             "number": 42,
@@ -33,6 +35,26 @@ func TestBuildJourneyProducesVerifiableMergedEvidence(t *testing.T) {
             "pull_request": {"merged_at":"` + mergedAt + `"}
           }]
         }`))
+			return
+		}
+		if strings.Contains(query, "is:issue") {
+			_, _ = response.Write([]byte(`{
+          "total_count": 1,
+          "items": [{
+            "number": 55,
+            "title": "Document a missing webhook annotation",
+            "body": "",
+            "html_url": "https://github.com/example/platform/issues/55",
+            "repository_url": "https://api.github.com/repos/example/platform",
+            "state": "open",
+            "labels": [{"name":"kind/bug"}],
+            "created_at": "` + issueCreatedAt + `",
+            "updated_at": "2026-07-01T09:30:18Z"
+          }]
+        }`))
+			return
+		}
+		t.Fatalf("unexpected journey query %q", query)
 	}))
 	defer server.Close()
 
@@ -49,18 +71,25 @@ func TestBuildJourneyProducesVerifiableMergedEvidence(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if journey.Slug != "test-user" || journey.GitHubUsername != "test-user" || len(journey.Entries) != 1 {
+	if journey.Slug != "test-user" || journey.GitHubUsername != "test-user" || len(journey.Entries) != 2 {
 		t.Fatalf("unexpected journey: %#v", journey)
 	}
-	entry := journey.Entries[0]
-	if entry.PRNumber != 42 || entry.LinkedIssue != "example/platform#17" {
-		t.Fatalf("unexpected contribution evidence: %#v", entry)
+	mergedEntry := journey.Entries[0]
+	if mergedEntry.Kind != "merged_pr" || mergedEntry.Number != 42 || mergedEntry.LinkedIssue != "example/platform#17" {
+		t.Fatalf("unexpected merged contribution evidence: %#v", mergedEntry)
 	}
-	if entry.MergedAt.Format(time.RFC3339) != mergedAt {
-		t.Fatalf("expected merged timestamp %s, got %s", mergedAt, entry.MergedAt.Format(time.RFC3339))
+	if mergedEntry.OccurredAt.Format(time.RFC3339) != mergedAt {
+		t.Fatalf("expected merged timestamp %s, got %s", mergedAt, mergedEntry.OccurredAt.Format(time.RFC3339))
 	}
-	if len(entry.DomainTags) != 1 || entry.DomainTags[0] != "kubernetes-controllers" || len(entry.ShapeTags) != 1 || entry.ShapeTags[0] != "bug-fix" {
-		t.Fatalf("expected configured classifications, got %#v", entry)
+	if len(mergedEntry.DomainTags) != 1 || mergedEntry.DomainTags[0] != "kubernetes-controllers" || len(mergedEntry.ShapeTags) != 1 || mergedEntry.ShapeTags[0] != "bug-fix" {
+		t.Fatalf("expected configured classifications, got %#v", mergedEntry)
+	}
+	issueEntry := journey.Entries[1]
+	if issueEntry.Kind != "opened_issue" || issueEntry.Number != 55 || issueEntry.State != "open" {
+		t.Fatalf("unexpected issue contribution evidence: %#v", issueEntry)
+	}
+	if issueEntry.OccurredAt.Format(time.RFC3339) != issueCreatedAt {
+		t.Fatalf("expected issue timestamp %s, got %s", issueCreatedAt, issueEntry.OccurredAt.Format(time.RFC3339))
 	}
 }
 

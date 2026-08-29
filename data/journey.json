@@ -1,7 +1,36 @@
 {
-  "generated_at": "2026-08-29T10:09:02Z",
+  "generated_at": "2026-08-29T17:10:40Z",
   "name": "Simar",
   "slug": "simar",
   "github_username": "simxr",
-  "entries": []
+  "entries": [
+    {
+      "kind": "opened_issue",
+      "repository": "devfile/devworkspace-operator",
+      "number": 1668,
+      "url": "https://github.com/devfile/devworkspace-operator/issues/1668",
+      "title": "Add cert-manager CA injection annotation to DevWorkspace validating webhook",
+      "domain_tags": [
+        "kubernetes-controllers",
+        "platform-tooling"
+      ],
+      "shape_tags": [],
+      "state": "open",
+      "occurred_at": "2026-07-01T09:30:18Z"
+    },
+    {
+      "kind": "opened_issue",
+      "repository": "devfile/devworkspace-operator",
+      "number": 1648,
+      "url": "https://github.com/devfile/devworkspace-operator/issues/1648",
+      "title": "Support disabling shared workspace endpoint TLS secret when externalTLSConfig is enabled for DevWorkspace endpoints",
+      "domain_tags": [
+        "kubernetes-controllers",
+        "platform-tooling"
+      ],
+      "shape_tags": [],
+      "state": "closed",
+      "occurred_at": "2026-06-16T15:15:14Z"
+    }
+  ]
 }

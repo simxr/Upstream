@@ -52,13 +52,15 @@ export type Feed = {
 };
 
 export type JourneyEntry = {
+  kind: "merged_pr" | "opened_issue";
   repository: string;
-  pr_number: number;
-  pr_url: string;
+  number: number;
+  url: string;
   title: string;
   domain_tags: string[];
   shape_tags: string[];
-  merged_at: string;
+  state?: "open" | "closed" | "merged" | string;
+  occurred_at: string;
   linked_issue?: string;
 };
 

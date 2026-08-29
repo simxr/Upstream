@@ -28,20 +28,40 @@ func buildJourney(ctx context.Context, client *GitHubClient, config Config, gene
 				mergedAt = *pullRequest.PullRequest.MergedAt
 			}
 			entries = append(entries, JourneyEntry{
+				Kind:        "merged_pr",
 				Repository:  repository.Repo,
-				PRNumber:    pullRequest.Number,
-				PRURL:       pullRequest.HTMLURL,
+				Number:      pullRequest.Number,
+				URL:         pullRequest.HTMLURL,
 				Title:       pullRequest.Title,
 				DomainTags:  sortedCopy(repository.Domains),
 				ShapeTags:   inferShapes(pullRequest.Labels, shapeByAlias),
-				MergedAt:    mergedAt,
+				State:       "merged",
+				OccurredAt:  mergedAt,
 				LinkedIssue: linkedIssueFromBody(repository.Repo, pullRequest.Body),
+			})
+		}
+
+		issues, err := client.searchAuthoredIssues(ctx, repository.Repo, config.Profile.GitHubUsername)
+		if err != nil {
+			return Journey{}, fmt.Errorf("fetch authored issues for %s: %w", repository.Repo, err)
+		}
+		for _, issue := range issues {
+			entries = append(entries, JourneyEntry{
+				Kind:       "opened_issue",
+				Repository: repository.Repo,
+				Number:     issue.Number,
+				URL:        issue.HTMLURL,
+				Title:      issue.Title,
+				DomainTags: sortedCopy(repository.Domains),
+				ShapeTags:  inferShapes(issue.Labels, shapeByAlias),
+				State:      issue.State,
+				OccurredAt: issue.CreatedAt,
 			})
 		}
 	}
 
 	sort.SliceStable(entries, func(left, right int) bool {
-		return entries[left].MergedAt.After(entries[right].MergedAt)
+		return entries[left].OccurredAt.After(entries[right].OccurredAt)
 	})
 	return Journey{
 		GeneratedAt:    generatedAt,

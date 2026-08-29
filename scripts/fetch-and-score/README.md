@@ -1,6 +1,6 @@
 # Feed generator
 
-This Go command reads the curated Upstream configuration, makes read-only GitHub requests, scores approachable issues, and records merged pull requests authored by the configured profile across the curated repository set.
+This Go command reads the curated Upstream configuration, makes read-only GitHub requests, scores approachable issues, and records issues opened plus pull requests merged by the configured profile across the curated repository set.
 
 ```bash
 go run ./scripts/fetch-and-score \

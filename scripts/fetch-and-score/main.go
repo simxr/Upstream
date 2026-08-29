@@ -79,7 +79,7 @@ func run(configDir, output, journeyOutput, apiURL, token string) error {
 	} else {
 		fmt.Printf("wrote %d ranked issues to %s\n", len(issues), output)
 	}
-	fmt.Printf("wrote %d merged pull requests to %s\n", len(journey.Entries), journeyOutput)
+	fmt.Printf("wrote %d verified contributions to %s\n", len(journey.Entries), journeyOutput)
 	return nil
 }
 

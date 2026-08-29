@@ -18,6 +18,8 @@ export default async function JourneyPage({ params }: { params: Promise<{ slug: 
 
   const repositories = new Set(journey.entries.map((entry) => entry.repository));
   const domains = new Set(journey.entries.flatMap((entry) => entry.domain_tags));
+  const mergedPullRequests = journey.entries.filter((entry) => entry.kind === "merged_pr");
+  const openedIssues = journey.entries.filter((entry) => entry.kind === "opened_issue");
 
   return (
     <main className="journey-page">
@@ -45,41 +47,42 @@ export default async function JourneyPage({ params }: { params: Promise<{ slug: 
 
       <section className="journey-hero">
         <div>
-          <p className="terminal-kicker"><span>upstream://journey — verified merges</span></p>
+          <p className="terminal-kicker"><span>upstream://journey — verified contributions</span></p>
           <h1>{journey.name}&apos;s{" "}<span>upstream journey.</span></h1>
           <p>
-            Public, verifiable pull requests merged into curated cloud-native projects. No impact
-            score, no self-reported claims—just the work and its upstream record.
+            Public, verifiable issues opened and pull requests merged in curated cloud-native
+            projects. No impact score, no self-reported claims—just the work and its upstream record.
           </p>
           <a className="journey-profile-link" href={`https://github.com/${journey.github_username}`} target="_blank" rel="noreferrer">
             github.com/{journey.github_username} <span aria-hidden="true">↗</span>
           </a>
         </div>
         <dl className="journey-stats">
-          <div><dt>Merged PRs</dt><dd>{journey.entries.length}</dd></div>
+          <div><dt>Merged PRs</dt><dd>{mergedPullRequests.length}</dd></div>
+          <div><dt>Issues opened</dt><dd>{openedIssues.length}</dd></div>
           <div><dt>Repositories</dt><dd>{repositories.size}</dd></div>
           <div><dt>Domains</dt><dd>{domains.size}</dd></div>
         </dl>
       </section>
 
-      <section className="journey-content" aria-label="Merged contribution timeline">
+      <section className="journey-content" aria-label="Verified contribution timeline">
         <div className="section-heading">
           <div>
             <p className="eyebrow">Contribution evidence</p>
-            <h2>Merged upstream</h2>
+            <h2>Upstream activity</h2>
           </div>
           <span>Last checked {formatDate(journey.generated_at)}</span>
         </div>
 
         {journey.entries.length > 0 ? (
           <ol className="journey-timeline">
-            {journey.entries.map((entry) => <JourneyItem entry={entry} key={`${entry.repository}#${entry.pr_number}`} />)}
+            {journey.entries.map((entry) => <JourneyItem entry={entry} key={`${entry.kind}:${entry.repository}#${entry.number}`} />)}
           </ol>
         ) : (
           <div className="journey-empty">
             <span aria-hidden="true">◇</span>
-            <h2>The evidence trail starts with the first merge.</h2>
-            <p>Merged pull requests authored by @{journey.github_username} in the curated repository set will appear here automatically.</p>
+            <h2>The evidence trail starts with the first contribution.</h2>
+            <p>Issues opened and pull requests merged by @{journey.github_username} in the curated repository set will appear here automatically.</p>
           </div>
         )}
       </section>
@@ -93,16 +96,21 @@ export default async function JourneyPage({ params }: { params: Promise<{ slug: 
 }
 
 function JourneyItem({ entry }: { entry: JourneyEntry }) {
+  const isPullRequest = entry.kind === "merged_pr";
+  const contributionLabel = isPullRequest ? "PR" : "Issue";
+  const eventLabel = isPullRequest ? "Merged" : "Opened";
+
   return (
     <li className="journey-entry">
       <span className="journey-entry__node" aria-hidden="true" />
       <article>
         <div className="journey-entry__topline">
           <a href={`https://github.com/${entry.repository}`} target="_blank" rel="noreferrer">{entry.repository}</a>
-          <span>PR #{entry.pr_number}</span>
-          <time dateTime={entry.merged_at}>Merged {formatDate(entry.merged_at)}</time>
+          <span>{contributionLabel} #{entry.number}</span>
+          {!isPullRequest && entry.state && <span>{displayTag(entry.state)}</span>}
+          <time dateTime={entry.occurred_at}>{eventLabel} {formatDate(entry.occurred_at)}</time>
         </div>
-        <h2><a href={entry.pr_url} target="_blank" rel="noreferrer">{entry.title} <span aria-hidden="true">↗</span></a></h2>
+        <h2><a href={entry.url} target="_blank" rel="noreferrer">{entry.title} <span aria-hidden="true">↗</span></a></h2>
         <div className="tag-row">
           {entry.domain_tags.map((tag) => <span className="tag tag--domain" data-tag={tag} key={tag}>{displayTag(tag)}</span>)}
           {entry.shape_tags.map((tag) => <span className="tag tag--shape" data-tag={tag} key={tag}>{displayTag(tag)}</span>)}
