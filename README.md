@@ -10,6 +10,7 @@ Upstream is built for engineers who already think in Kubernetes, Terraform, and 
 
 - **Domain-driven, not language-driven:** Filter by platform-engineering concepts such as `infrastructure-as-code`, `kubernetes-controllers`, `observability`, `identity-access`, and `ci-cd-automation`.
 - **Contribution shapes:** See whether an issue calls for a `bug-fix`, `docs`, `chart-config`, `tests`, or a feature before opening it.
+- **Helm-aware discovery:** Follow contribution opportunities across `helm/helm`, `prometheus-community/helm-charts`, Argo CD, and other curated platform projects without confusing chart work with generic YAML changes.
 - **Skill-profile matching:** Cross-reference issues with `config/profile.yaml` and get a plain-language explanation of every match.
 - **Curated signal, low noise:** Search a deliberately narrow allowlist drawn from the CNCF Landscape and hand-picked AWS projects—not the whole of GitHub.
 - **Personal tracking:** Keep a private, device-local contribution journey from Bookmarked → In Progress → PR Submitted → In Review → Merged or Closed.
